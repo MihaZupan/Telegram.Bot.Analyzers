@@ -5,30 +5,10 @@ Roslyn analyzers and code fixes for the Telegram.Bot library
 
 Install as [NuGet package](https://www.nuget.org/packages/Telegram.Bot.Analyzers/):
 
+Browse the list of all diagnostics: [`LIST`](https://github.com/MihaZupan/Telegram.Bot.Analyzers/blob/master/LIST.md)
+
 Package manager:
 
 ```powershell
 Install-Package Telegram.Bot.Analyzers
-```
-
-## Diagnostics examples
-
-#### TG0001 - Message.Chat should be used instead of Message.Chat.Id
-
-```csharp
-await Bot.SendTextMessageAsync(message.Chat.Id, "Hello");            
-```
-becomes
-```csharp
-await Bot.SendTextMessageAsync(message.Chat, "Hello");
-```
-
-#### TG0002 - Method call parameters can be simplified
-
-```csharp
-await Bot.EditMessageCaptionAsync(message.Chat, message.MessageId, "New caption");
-```
-becomes
-```csharp
-await Bot.EditMessageCaptionAsync(message, "New caption");           
 ```
