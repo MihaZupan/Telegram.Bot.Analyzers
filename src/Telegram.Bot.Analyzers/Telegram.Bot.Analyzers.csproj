@@ -8,20 +8,21 @@
   
   <PropertyGroup>
     <PackageId>Telegram.Bot.Analyzers</PackageId>
-    <Authors>Mihu</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
-    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
-    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <Authors>MihaZupan</Authors>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/MihaZupan/Telegram.Bot.Analyzers/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/MihaZupan/Telegram.Bot.Analyzers</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/MihaZupan/Telegram.Bot.Analyzers/master/telegram-bot-analyzer.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/MihaZupan/Telegram.Bot.Analyzers.git</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Description>Telegram.Bot.Analyzers</Description>
-    <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
-    <Copyright>Copyright</Copyright>
-    <PackageTags>Telegram.Bot.Analyzers, analyzers</PackageTags>
+    <Description>Roslyn analyzers and code fixes for the Telegram.Bot library</Description>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <Copyright>Copyright © Miha Zupan 2018</Copyright>
+    <PackageTags>Telegram.Bot.Analyzers;Analyzer;Telegram;Bot;Roslyn</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
-    <Version>1.0.19</Version>
-    <FileVersion>1.0.19.0</FileVersion>
-    <AssemblyVersion>1.0.19.0</AssemblyVersion>
+    <Version>1.1.0</Version>
+    <FileVersion>1.1.0.0</FileVersion>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <Company>MihaZupan</Company>
   </PropertyGroup>
      
   <ItemGroup>
