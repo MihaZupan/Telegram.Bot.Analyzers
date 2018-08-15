@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <PackageId>Telegram.Bot.Analyzers</PackageId>
+    <Authors>Mihu</Authors>
+    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
+    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
+    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
+    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>Telegram.Bot.Analyzers</Description>
+    <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
+    <Copyright>Copyright</Copyright>
+    <PackageTags>Telegram.Bot.Analyzers, analyzers</PackageTags>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <Version>1.0.19</Version>
+    <FileVersion>1.0.19.0</FileVersion>
+    <AssemblyVersion>1.0.19.0</AssemblyVersion>
+  </PropertyGroup>
+     
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.8.2" PrivateAssets="all" />
+    <PackageReference Update="NETStandard.Library" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="tools\" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="tools\*.ps1" CopyToOutputDirectory="Always" Pack="true" PackagePath="" />
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+</Project>
