@@ -65,7 +65,7 @@ namespace Telegram.Bot.Analyzers.Diagnostics
                     int length = arguments[i + 1].Span.End - start;
                     Location location = Location.Create(invocation.SyntaxTree, new TextSpan(start, length));
 
-                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptor, location, methodName));
+                    context.ReportDiagnostic(GetDiagnostic(location, methodName));
                     break;
                 }
             }

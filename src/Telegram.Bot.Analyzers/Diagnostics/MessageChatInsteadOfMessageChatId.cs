@@ -42,7 +42,7 @@ namespace Telegram.Bot.Analyzers.Diagnostics
                     chatIdAccess.Expression is MemberAccessExpressionSyntax chatAccess &&
                     chatAccess.AccessedMemberName() == "Chat")
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptor, arguments[i].GetLocation(), chatAccess.ExpressionString()));
+                    context.ReportDiagnostic(GetDiagnostic(arguments[i].GetLocation(), chatAccess.ExpressionString()));
                 }
             }
         }
