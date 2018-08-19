@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MihaZupan.CodeAnalysis.Framework;
-using Telegram.Bot.Analyzers.Analyzers;
+using Telegram.Bot.Analyzers.Diagnostics;
 using Telegram.Bot.Analyzers.Test.Framework;
 
 namespace Telegram.Bot.Analyzers.Test

@@ -22,7 +22,7 @@ To implement the class, it needs to implement 3 things:
 You must also add the `ExportCodeFixProvider` attribute to your diagnostic.
 *(Sadly, Visual Studio doesn't register code fixes if the attribute is added with reflection at runtime)*
 
-For an example, see any diagnostic in the [Analyzers](https://github.com/MihaZupan/Telegram.Bot.Analyzers/tree/master/src/Telegram.Bot.Analyzers/Analyzers) folder.
+For an example, see any diagnostic in the [Diagnostics](https://github.com/MihaZupan/Telegram.Bot.Analyzers/tree/master/src/Telegram.Bot.Analyzers/Diagnostics) folder.
 
 If you wish to create a diagnostic *without a code fix*, you **must** set the `ImplementsCodeFix` on `Configuration` to **`false`**.
 You can then return `null` in `ExecuteCodeFixAsync`.

@@ -12,7 +12,7 @@ using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
 using MihaZupan.CodeAnalysis.Framework;
 
-namespace Telegram.Bot.Analyzers.Analyzers
+namespace Telegram.Bot.Analyzers.Diagnostics
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MessageChatAndIdToMessage)), Shared]
     public class MessageChatAndIdToMessage : DiagnosticBase<SyntaxNodeAnalysisContext>
