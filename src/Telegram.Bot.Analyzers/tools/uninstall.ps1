@@ -26,20 +26,7 @@ foreach($analyzersPath in $analyzersPaths)
     }
 }
 
-# $project.Type gives the language name like (C# or VB.NET)
-$languageFolder = ""
-if($project.Type -eq "C#")
-{
-    $languageFolder = "cs"
-}
-if($project.Type -eq "VB.NET")
-{
-    $languageFolder = "vb"
-}
-if($languageFolder -eq "")
-{
-    return
-}
+$languageFolder = "cs"
 
 foreach($analyzersPath in $analyzersPaths)
 {
@@ -55,10 +42,7 @@ foreach($analyzersPath in $analyzersPaths)
                 {
                     $project.Object.AnalyzerReferences.Remove($analyzerFilePath.FullName)
                 }
-                catch
-                {
-
-                }
+                catch { }
             }
         }
     }
