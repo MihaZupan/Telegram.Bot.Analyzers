@@ -1,0 +1,8 @@
+language: csharp
+mono: none
+dotnet: 2.0.0
+script:
+- |-
+  cd test/Telegram.Bot.Analyzers.Test
+  dotnet test --configuration Release --list-tests
+  dotnet xunit --configuration Release -nobuild
