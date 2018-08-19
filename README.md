@@ -1,4 +1,7 @@
 # Telegram.Bot.Analyzers
+
+[![Build Status](https://travis-ci.org/MihaZupan/Telegram.Bot.Analyzers.svg?branch=master)](https://travis-ci.org/MihaZupan/Telegram.Bot.Analyzers)
+
 Roslyn analyzers and code fixes for the Telegram.Bot library
 
 Browse the list of all diagnostics: [`LIST`](https://github.com/MihaZupan/Telegram.Bot.Analyzers/blob/master/LIST.md)

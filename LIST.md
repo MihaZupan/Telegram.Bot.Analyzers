@@ -19,5 +19,5 @@ await Bot.EditMessageCaptionAsync(message, "New caption");
 ```
 
 
-[`MessageChatInsteadOfMessageChatId.cs`]: https://github.com/MihaZupan/Telegram.Bot.Analyzers/blob/master/src/Telegram.Bot.Analyzers/Analyzers/MessageChatInsteadOfMessageChatId.cs
-[`MessageChatAndIdToMessage.cs`]: https://github.com/MihaZupan/Telegram.Bot.Analyzers/blob/master/src/Telegram.Bot.Analyzers/Analyzers/MessageChatAndIdToMessage.cs
+[`MessageChatInsteadOfMessageChatId.cs`]: https://github.com/MihaZupan/Telegram.Bot.Analyzers/blob/master/src/Telegram.Bot.Analyzers/Diagnostics/MessageChatInsteadOfMessageChatId.cs
+[`MessageChatAndIdToMessage.cs`]: https://github.com/MihaZupan/Telegram.Bot.Analyzers/blob/master/src/Telegram.Bot.Analyzers/Diagnostics/MessageChatAndIdToMessage.cs
