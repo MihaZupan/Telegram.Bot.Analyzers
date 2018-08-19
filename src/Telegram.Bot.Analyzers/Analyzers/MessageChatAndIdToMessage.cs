@@ -4,31 +4,26 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Editing;
 using Microsoft.CodeAnalysis.Text;
+using MihaZupan.CodeAnalysis.Framework;
 
 namespace Telegram.Bot.Analyzers.Analyzers
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MessageChatAndIdToMessage)), Shared]
-    public class MessageChatAndIdToMessage : CodeFixProvider, ISyntaxNodeRule
+    public class MessageChatAndIdToMessage : DiagnosticBase<SyntaxNodeAnalysisContext>
     {
-        public static MessageChatAndIdToMessage Instance { get; } = new MessageChatAndIdToMessage();
-
-        public MessageChatAndIdToMessage() { }
-
-        public DiagnosticDescriptor DiagnosticDescriptor { get; } = new DiagnosticDescriptor(
-            DiagnosticIDs.MessageChatAndIdToMessage,
-            "Method call parameters can be simplified",
-            "Use an overload for {0} that takes a Message parameter, instead of Chat and MessageId",
-            Constants.Category,
-            DiagnosticSeverity.Warning,
-            isEnabledByDefault: true);
-
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(DiagnosticIDs.MessageChatAndIdToMessage);
+        public override DiagnosticConfig<SyntaxNodeAnalysisContext> Configuration =>
+            new DiagnosticConfig<SyntaxNodeAnalysisContext>(
+                ActionType<SyntaxNodeAnalysisContext>.Create(SyntaxKind.InvocationExpression),
+                "TG0002",
+                "Method call parameters can be simplified",
+                "Use an overload for {0} that takes a Message parameter, instead of Chat and MessageId",
+                "Simplify method call");
 
         private static readonly ImmutableHashSet<string> ValidMethods =
             ImmutableHashSet.Create(
@@ -42,12 +37,14 @@ namespace Telegram.Bot.Analyzers.Analyzers
                 "DeleteMessageAsync",
                 "PinChatMessageAsync");
 
-        public void Analyze(SyntaxNodeAnalysisContext context)
+        public override void Analyze(SyntaxNodeAnalysisContext context)
         {
             var invocation = context.Node as InvocationExpressionSyntax;
             var methodAccess = invocation.Expression as MemberAccessExpressionSyntax;
 
-            string methodName = methodAccess.Name.Identifier.ValueText;
+            if (methodAccess?.CalleeParentTypeName(context) != "TelegramBotClient") return;
+
+            string methodName = methodAccess.AccessedMemberName();
             if (!ValidMethods.Contains(methodName)) return;
 
             var argumentList = invocation.ArgumentList;
@@ -62,9 +59,7 @@ namespace Telegram.Bot.Analyzers.Analyzers
                     arguments[i + 1].Expression is MemberAccessExpressionSyntax messageIdAccess &&
                     chatIdAccess.AccessedMemberName() == "Chat" &&
                     messageIdAccess.AccessedMemberName() == "MessageId" &&
-                    chatIdAccess.VariableName() == messageIdAccess.VariableName() &&
-                    chatIdAccess.CaleeParentTypeName(context) == "Message" &&
-                    messageIdAccess.CaleeParentTypeName(context) == "Message")
+                    chatIdAccess.ExpressionString() == messageIdAccess.ExpressionString())
                 {
                     int start = arguments[i].SpanStart;
                     int length = arguments[i + 1].Span.End - start;
@@ -76,23 +71,7 @@ namespace Telegram.Bot.Analyzers.Analyzers
             }
         }
 
-        public override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
-
-        #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
-        #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-        {
-            var diagnostic = context.Diagnostics.First();
-            
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: "Simplify method call",
-                    createChangedDocument: c => SimplifyMethodCall(context.Document, diagnostic, c),
-                    equivalenceKey: DiagnosticIDs.MessageChatAndIdToMessage),
-                diagnostic);
-        }
-
-        private async Task<Document> SimplifyMethodCall(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        protected override async Task<Document> ExecuteCodeFixAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var diagnosticSpan = diagnostic.Location.SourceSpan;
             var root = await document.GetSyntaxRootAsync(cancellationToken);
@@ -103,10 +82,10 @@ namespace Telegram.Bot.Analyzers.Analyzers
             int messageChatArgumentIndex = arguments.IndexOf(a => a.SpanStart == diagnosticSpan.Start);
 
             var memberAccess = arguments[messageChatArgumentIndex].Expression as MemberAccessExpressionSyntax;
-            var variableName = memberAccess.VariableName();
+            var accessorName = memberAccess.ExpressionString();
 
             var generator = SyntaxGenerator.GetGenerator(document);
-            var identifierName = generator.IdentifierName(variableName);
+            var identifierName = generator.IdentifierName(accessorName);
             var newArgument = generator.Argument(identifierName) as ArgumentSyntax;
 
             var newArguments = arguments

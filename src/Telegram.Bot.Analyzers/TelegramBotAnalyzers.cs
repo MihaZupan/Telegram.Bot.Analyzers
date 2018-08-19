@@ -1,37 +1,30 @@
 using System.Collections.Immutable;
+using System.IO;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using MihaZupan.CodeAnalysis.Framework;
 
 namespace Telegram.Bot.Analyzers
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class TelegramBotAnalyzers : DiagnosticAnalyzer
     {
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(
-            Analyzers.MessageChatInsteadOfMessageChatId.Instance.DiagnosticDescriptor,
-            Analyzers.MessageChatAndIdToMessage.Instance.DiagnosticDescriptor);
-
-        public override void Initialize(AnalysisContext context)
+        static TelegramBotAnalyzers()
         {
-            context.RegisterSyntaxNodeAction(
-                AnalyzeInvocationExpression,
-                SyntaxKind.InvocationExpression);
-        }
-
-        private static void AnalyzeInvocationExpression(SyntaxNodeAnalysisContext context)
-        {
-            var invocation = context.Node as InvocationExpressionSyntax;
-
-            if (invocation.Expression is MemberAccessExpressionSyntax methodAccess)
+            // When compiling the project that uses this analyzer, the Microsoft.CodeAnalysis.Workspaces assembly is not loaded.
+            // All this try-catch and null checking nonsense is here to remove the warning one would get when compiling
+            try
             {
-                // Make sure that the method is a part of the TelegramBotClient class
-                if (methodAccess.CaleeParentTypeName(context) != "TelegramBotClient") return;
-
-                Analyzers.MessageChatInsteadOfMessageChatId.Instance.Analyze(context);
-                Analyzers.MessageChatAndIdToMessage.Instance.Analyze(context);
+                DiagnosticConfig.DefaultCategory = "Telegram.Bot";
+                Manager = new AnalyzerBase();
             }
+            catch (FileNotFoundException exception)
+            when (exception.FileName.Contains("Microsoft.CodeAnalysis.Workspaces"))
+            { }
         }
+
+        static readonly AnalyzerBase Manager;
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => Manager?.SupportedDiagnostics ?? ImmutableArray<DiagnosticDescriptor>.Empty;
+        public override void Initialize(AnalysisContext context) => Manager?.Initialize(context);
     }
 }
