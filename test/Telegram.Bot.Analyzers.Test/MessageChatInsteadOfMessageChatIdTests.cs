@@ -1,59 +1,36 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MihaZupan.CodeAnalysis.Framework;
+using Telegram.Bot.Analyzers.Analyzers;
+using Telegram.Bot.Analyzers.Test.Framework;
 
 namespace Telegram.Bot.Analyzers.Test
 {
     [TestClass]
     public class MessageChatInsteadOfMessageChatIdTests : CodeFixVerifier
     {
+        protected override DiagnosticBase CodeFixProvider => new MessageChatInsteadOfMessageChatId();
+
         [TestMethod]
         public void ActualTest()
         {
             var test = @"
-namespace TestNamespace
+static async void Test()
 {
-    class TestClass
-    {
-        static async void Test()
-        {
-            var bot = new TelegramBotClient(""API Token"");
-            Message message = null;
+    TelegramBotClient bot = null;
+    Message message = null;
 
-            await bot.SendTextMessageAsync(message.Chat.Id, """");
-        }
-    }
+    bot.SendTextMessageAsync(message.Chat.Id, """");
 }";
+
             var expected = new[]
             {
-                new DiagnosticResult()
-                {
-                    Id = DiagnosticIDs.MessageChatInsteadOfMessageChatId,
-                    Message = "Use message.Chat instead of message.Chat.Id",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[] {
-                            new DiagnosticResultLocation("Test0.cs", 11, 44)
-                        }
-                }
+                GetDiagnosticResult("message", 7, 30)
             };
 
-            VerifyCSharpDiagnostic(test, expected);
+            VerifyDiagnostic(test, expected);
 
             var fixtest = test.Replace("message.Chat.Id", "message.Chat");
-            VerifyCSharpFix(test, fixtest);
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return Analyzers.MessageChatInsteadOfMessageChatId.Instance;
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new TelegramBotAnalyzers();
+            VerifyFix(test, fixtest);
         }
     }
 }

@@ -1,88 +1,53 @@
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TestHelper;
+using MihaZupan.CodeAnalysis.Framework;
+using Telegram.Bot.Analyzers.Analyzers;
+using Telegram.Bot.Analyzers.Test.Framework;
 
 namespace Telegram.Bot.Analyzers.Test
 {
     [TestClass]
     public class MessageChatAndIdToMessageTests : CodeFixVerifier
     {
+        protected override DiagnosticBase CodeFixProvider => new MessageChatAndIdToMessage();
+
         [TestMethod]
         public void ActualTest()
         {
             var test = @"
-namespace TestNamespace
+void Test()
 {
-    class TestClass
-    {
-        static async void Test()
-        {
-            var bot = new Telegram.Bot.TelegramBotClient(""API Token"");
-            Telegram.Bot.Types.Message message = null;
+    TelegramBotClient bot = null;
 
-            await bot.EditMessageTextAsync(123, 123, """");
-            await bot.SendTextMessageAsync(123, """");
-            await bot.EditMessageLiveLocationAsync(message.Chat, message.MessageId, 123, 123);
-            await bot.ForwardMessageAsync(message.Chat, fromChatId: message.Chat, messageId: message.MessageId);
-        }
-    }
+    bot.EditMessageTextAsync(123, 123, """");
+    bot.EditMessageLiveLocationAsync(message.Chat, message.MessageId, 123, 123);
+    bot.SendTextMessageAsync(123, """");
+    bot.ForwardMessageAsync(message.Chat, fromChatId: message.Chat, messageId: message.MessageId);
+    bot.DeleteMessageAsync(e.CallbackQuery.Message.Chat, e.CallbackQuery.Message.MessageId);
 }";
-            var expected = new []
+
+            var expected = new[]
             {
-                new DiagnosticResult()
-                {
-                    Id = DiagnosticIDs.MessageChatAndIdToMessage,
-                    Message = "Use an overload for EditMessageLiveLocationAsync that takes a Message parameter, instead of Chat and MessageId",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[] {
-                            new DiagnosticResultLocation("Test0.cs", 13, 52)
-                        }
-                },
-                new DiagnosticResult()
-                {
-                    Id = DiagnosticIDs.MessageChatAndIdToMessage,
-                    Message = "Use an overload for ForwardMessageAsync that takes a Message parameter, instead of Chat and MessageId",
-                    Severity = DiagnosticSeverity.Warning,
-                    Locations =
-                        new[] {
-                            new DiagnosticResultLocation("Test0.cs", 14, 57)
-                        }
-                }
+                GetDiagnosticResult("EditMessageLiveLocationAsync", 7, 38),
+                GetDiagnosticResult("ForwardMessageAsync", 9, 43),
+                GetDiagnosticResult("DeleteMessageAsync", 10, 28)
             };
 
-            VerifyCSharpDiagnostic(test, expected);
+            Assert.AreNotEqual(0, Analyzer.SupportedDiagnostics.Length);
+
+            VerifyDiagnostic(test, expected);
 
             var fixtest = @"
-namespace TestNamespace
+void Test()
 {
-    class TestClass
-    {
-        static async void Test()
-        {
-            var bot = new Telegram.Bot.TelegramBotClient(""API Token"");
-            Telegram.Bot.Types.Message message = null;
+    TelegramBotClient bot = null;
 
-            await bot.EditMessageTextAsync(123, 123, """");
-            await bot.SendTextMessageAsync(123, """");
-            await bot.EditMessageLiveLocationAsync(message, 123, 123);
-            await bot.ForwardMessageAsync(message.Chat, message);
-        }
-    }
+    bot.EditMessageTextAsync(123, 123, """");
+    bot.EditMessageLiveLocationAsync(message, 123, 123);
+    bot.SendTextMessageAsync(123, """");
+    bot.ForwardMessageAsync(message.Chat, message);
+    bot.DeleteMessageAsync(e.CallbackQuery.Message);
 }";
-            VerifyCSharpFix(test, fixtest);
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return Analyzers.MessageChatAndIdToMessage.Instance;
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new TelegramBotAnalyzers();
+            VerifyFix(test, fixtest);
         }
     }
 }
