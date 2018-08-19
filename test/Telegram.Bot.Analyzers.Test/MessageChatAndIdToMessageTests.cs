@@ -1,16 +1,15 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MihaZupan.CodeAnalysis.Framework;
 using Telegram.Bot.Analyzers.Diagnostics;
 using Telegram.Bot.Analyzers.Test.Framework;
+using Xunit;
 
 namespace Telegram.Bot.Analyzers.Test
 {
-    [TestClass]
     public class MessageChatAndIdToMessageTests : CodeFixVerifier
     {
         protected override DiagnosticBase CodeFixProvider => new MessageChatAndIdToMessage();
 
-        [TestMethod]
+        [Fact]
         public void ActualTest()
         {
             var test = @"
@@ -31,8 +30,6 @@ void Test()
                 GetDiagnosticResult("ForwardMessageAsync", 9, 43),
                 GetDiagnosticResult("DeleteMessageAsync", 10, 28)
             };
-
-            Assert.AreNotEqual(0, Analyzer.SupportedDiagnostics.Length);
 
             VerifyDiagnostic(test, expected);
 

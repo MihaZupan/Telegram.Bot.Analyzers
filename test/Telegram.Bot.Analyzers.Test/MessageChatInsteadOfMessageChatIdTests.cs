@@ -1,16 +1,15 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MihaZupan.CodeAnalysis.Framework;
+﻿using MihaZupan.CodeAnalysis.Framework;
 using Telegram.Bot.Analyzers.Diagnostics;
 using Telegram.Bot.Analyzers.Test.Framework;
+using Xunit;
 
 namespace Telegram.Bot.Analyzers.Test
 {
-    [TestClass]
     public class MessageChatInsteadOfMessageChatIdTests : CodeFixVerifier
     {
         protected override DiagnosticBase CodeFixProvider => new MessageChatInsteadOfMessageChatId();
 
-        [TestMethod]
+        [Fact]
         public void ActualTest()
         {
             var test = @"
